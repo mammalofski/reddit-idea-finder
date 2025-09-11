@@ -19,11 +19,12 @@ try:
         print("=" * 60)
         
         try:
-            # Create the agent
-            agent = RedditProjectIdeaFinderAgent()
+            # Create the agent with PlanReActPlanner for enhanced reasoning
+            print("🧠 Testing with PlanReActPlanner for structured reasoning...")
+            agent = RedditProjectIdeaFinderAgent(planner_type="plan_react")
             
             # Test query
-            query = "Find SaaS ideas for content creators"
+            query = "Find profitable SaaS opportunities for content creators"
             print(f"\n🎯 Demo Query: {query}")
             
             # Run the agent

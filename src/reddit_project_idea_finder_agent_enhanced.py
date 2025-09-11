@@ -23,7 +23,6 @@ from google.adk.agents import Agent
 from google.adk.sessions import InMemorySessionService
 from google.adk.runners import Runner
 from google.adk.planners import PlanReActPlanner, BuiltInPlanner
-from google.adk.tools import google_search, agent_tool
 from google.genai import types
 
 # Add current directory to path for importing reddit_idea_finder
@@ -76,7 +75,7 @@ class RedditProjectIdeaFinderAgent:
                 self.reddit_finder = None
         
     def _setup_tools(self):
-        """Set up the agent's tools for Reddit analysis, opportunity evaluation, and competitive analysis."""
+        """Set up the agent's tools for Reddit analysis and opportunity evaluation."""
         
         def search_reddit_for_ideas(query: str, focus_area: str = "general") -> Dict[str, Any]:
             """
@@ -232,70 +231,9 @@ class RedditProjectIdeaFinderAgent:
                 "next_steps": self._get_next_steps(overall_score)
             }
         
-        def analyze_market_competition(
-            idea_description: str,
-            target_keywords: str,
-            market_segment: str = "general"
-        ) -> Dict[str, Any]:
-            """
-            Tool to analyze market competition and existing solutions using Google Search.
-            
-            Args:
-                idea_description (str): Description of the business idea to research
-                target_keywords (str): Keywords to search for existing solutions
-                market_segment (str): Market segment to focus on (e.g., "saas", "mobile apps", "ai tools")
-            
-            Returns:
-                dict: Competitive analysis with existing solutions, gaps, and differentiation opportunities
-            """
-            print(f"🔍 Analyzing market competition for: {idea_description[:50]}...")
-            
-            # This function will be enhanced by the agent's google_search tool
-            # The agent will automatically use google_search when this tool is called
-            analysis_prompt = f"""
-            Research the competitive landscape for this business idea: {idea_description}
-            
-            Search for:
-            1. Existing solutions using keywords: {target_keywords}
-            2. Competitors in the {market_segment} market
-            3. Pricing models and features offered
-            4. User reviews and complaints about existing solutions
-            5. Market gaps and unmet needs
-            
-            Provide insights on:
-            - Top 3-5 existing competitors
-            - Common features and pricing
-            - User complaints and missing features
-            - Market differentiation opportunities
-            - Barriers to entry and competitive advantages
-            """
-            
-            return {
-                "status": "analysis_requested",
-                "idea": idea_description,
-                "search_keywords": target_keywords,
-                "market_segment": market_segment,
-                "analysis_prompt": analysis_prompt,
-                "competitive_factors": {
-                    "market_saturation": "To be analyzed via Google Search",
-                    "existing_solutions": "To be identified via Google Search", 
-                    "pricing_models": "To be researched via Google Search",
-                    "user_complaints": "To be discovered via Google Search",
-                    "differentiation_opportunities": "To be evaluated via Google Search"
-                },
-                "search_strategy": [
-                    f"{target_keywords} competitors",
-                    f"{target_keywords} tools alternatives",
-                    f"{target_keywords} reviews complaints",
-                    f"{market_segment} {target_keywords} pricing",
-                    f"best {target_keywords} software 2024"
-                ]
-            }
-        
         # Store tools as instance methods
         self.search_reddit_for_ideas = search_reddit_for_ideas
         self.evaluate_business_opportunity = evaluate_business_opportunity
-        self.analyze_market_competition = analyze_market_competition
     
     def _extract_pain_points(self, posts: List[Dict]) -> List[Dict[str, Any]]:
         """Extract pain points and opportunities from Reddit posts."""
@@ -418,117 +356,87 @@ class RedditProjectIdeaFinderAgent:
             ]
     
     def _create_agent(self):
-        """Create the main Reddit Project Idea Finder Agent with specialized sub-agents for different tasks."""
-        
-        # Create specialized sub-agents
-        # 1. Reddit Analysis Agent (custom tools)
-        reddit_agent = Agent(
-            name="reddit_analyzer",
-            model=self.model,
-            description="Specialized agent for analyzing Reddit discussions and evaluating business opportunities",
-            instruction="""You specialize in analyzing Reddit discussions to identify business opportunities.
-            
-Your capabilities:
-- Search Reddit for user pain points and problems
-- Extract insights from posts and comments
-- Evaluate business opportunities based on evidence
-- Assess market potential and implementation feasibility
-
-Always provide detailed analysis with supporting evidence from Reddit discussions.""",
-            tools=[self.search_reddit_for_ideas, self.evaluate_business_opportunity, self.analyze_market_competition]
-        )
-        
-        # 2. Market Research Agent (Google Search)
-        market_research_agent = Agent(
-            name="market_researcher", 
-            model=self.model,
-            description="Specialized agent for competitive analysis and market research using Google Search",
-            instruction="""You specialize in market research and competitive analysis.
-            
-Your capabilities:
-- Research existing competitors and solutions
-- Analyze market trends and demands
-- Identify pricing models and features
-- Discover market gaps and opportunities
-- Validate business ideas through search
-
-Use Google Search to provide comprehensive market intelligence and competitive insights.""",
-            tools=[google_search]
-        )
+        """Create the main Reddit Project Idea Finder Agent with advanced planning capabilities."""
         
         # Configure planner based on type
         planner = None
-        enhanced_instruction = """You are a sophisticated business opportunity analyst that coordinates specialized teams to discover profitable project ideas from Reddit discussions and validate them through market research.
+        enhanced_instruction = """You are a sophisticated business opportunity analyst specializing in discovering profitable project ideas from Reddit discussions.
 
 Your systematic approach:
 1. **Query Analysis**: Interpret user requests to understand what type of opportunities they're seeking
-2. **Team Coordination**: Delegate tasks to specialized sub-agents:
-   - reddit_analyzer: For analyzing Reddit discussions and evaluating opportunities
-   - market_researcher: For competitive analysis and market validation
-3. **Strategic Planning**: Develop a comprehensive analysis strategy with multiple angles
-4. **Synthesis & Report**: Combine insights from both agents to provide comprehensive recommendations
+2. **Strategic Planning**: Develop a comprehensive search strategy with multiple angles and follow-up investigations
+3. **Systematic Search**: Use search_reddit_for_ideas to find relevant discussions about problems, pain points, and unmet needs
+4. **Deep Analysis**: Examine posts and comments to identify patterns of user frustration and desired solutions
+5. **Opportunity Evaluation**: Use evaluate_business_opportunity to assess market potential and feasibility
+6. **Recursive Investigation**: If initial findings suggest promising areas, conduct follow-up searches for deeper insights
+7. **Synthesis & Report**: Provide 3-5 well-researched project recommendations with clear reasoning
 
 Advanced Guidelines:
 - PLAN before acting: Create a strategy for comprehensive opportunity discovery
-- Use reddit_analyzer to find and evaluate opportunities from Reddit discussions
-- Use market_researcher to validate opportunities and research competition
 - Focus on real problems people are actively discussing
-- Research competition thoroughly before recommending opportunities
+- Look for recurring complaints and feature requests across multiple subreddits
+- Prioritize opportunities with strong evidence and market potential
+- Consider implementation complexity and time-to-market
 - Provide specific, actionable recommendations with supporting evidence
-- Synthesize insights from both Reddit analysis and market research
+- Use recursive search to validate and deepen findings
+- Synthesize insights from multiple sources for comprehensive analysis
 
-You coordinate a team of specialists to provide the most comprehensive business opportunity analysis possible."""
+Planning Instructions:
+- When you receive a query, first PLAN your investigation strategy
+- Identify key search terms, target subreddits, and investigation angles
+- Plan follow-up searches based on initial findings
+- Structure your analysis to cover market validation, competition, and implementation feasibility
+"""
 
         if self.planner_type == "plan_react":
             planner = PlanReActPlanner()
             print("🧠 Using PlanReActPlanner for structured reasoning")
         elif self.planner_type == "built_in":
-            planner = BuiltInPlanner()
-            print("🧠 Using BuiltInPlanner for basic planning")
+            # Configure thinking for Gemini models
+            thinking_config = types.ThinkingConfig(
+                include_thoughts=True,  # Include model's reasoning process
+                thinking_budget=512     # Allow substantial thinking tokens
+            )
+            planner = BuiltInPlanner(thinking_config=thinking_config)
+            print("🧠 Using BuiltInPlanner with thinking capabilities")
         else:
             print("🧠 Using basic agent without planner")
         
-        # Create the main coordinating agent with sub-agents
+        # Create agent with or without planner
         if planner:
             self.agent = Agent(
                 name="reddit_project_idea_finder",
                 model=self.model,
                 planner=planner,
-                description="An intelligent agent that coordinates specialized teams to discover profitable project opportunities by analyzing Reddit discussions and validating them through comprehensive market research.",
+                description="An intelligent agent that discovers profitable project opportunities by analyzing Reddit discussions. Uses advanced planning capabilities to systematically identify user pain points, unmet needs, and market gaps.",
                 instruction=enhanced_instruction,
-                tools=[agent_tool.AgentTool(agent=reddit_agent), agent_tool.AgentTool(agent=market_research_agent)]
+                tools=[self.search_reddit_for_ideas, self.evaluate_business_opportunity]
             )
         else:
             self.agent = Agent(
                 name="reddit_project_idea_finder",
                 model=self.model,
-                description="An intelligent agent that coordinates specialized teams to discover profitable project opportunities by analyzing Reddit discussions and validating them through comprehensive market research.",
-                instruction="""You are a sophisticated business opportunity analyst that coordinates specialized teams to discover profitable project ideas from Reddit discussions and validate them through market research.
+                description="An intelligent agent that discovers profitable project opportunities by analyzing Reddit discussions. Identifies user pain points, unmet needs, and market gaps to suggest viable project ideas.",
+                instruction="""You are a sophisticated business opportunity analyst specializing in discovering profitable project ideas from Reddit discussions.
 
 Your process:
 1. **Query Analysis**: Interpret user requests to understand what type of opportunities they're seeking
-2. **Team Coordination**: Delegate tasks to specialized sub-agents:
-   - reddit_analyzer: For analyzing Reddit discussions and evaluating opportunities  
-   - market_researcher: For competitive analysis and market validation using Google Search
-3. **Strategic Analysis**: Develop comprehensive understanding through both sources
-4. **Synthesis & Report**: Combine insights to provide well-researched recommendations
-
-Enhanced Capabilities:
-- Coordinate Reddit analysis with competitive market research
-- Validate opportunities through multiple information sources
-- Identify market gaps and differentiation opportunities
-- Provide evidence-based recommendations with competitive context
+2. **Strategic Search**: Use search_reddit_for_ideas to find relevant discussions about problems, pain points, and unmet needs
+3. **Deep Analysis**: Examine posts and comments to identify patterns of user frustration and desired solutions
+4. **Opportunity Evaluation**: Use evaluate_business_opportunity to assess market potential and feasibility
+5. **Recursive Investigation**: If initial findings suggest promising areas, conduct follow-up searches for deeper insights
+6. **Report Generation**: Provide 3-5 well-researched project recommendations with clear reasoning
 
 Guidelines:
-- Use reddit_analyzer to find and evaluate opportunities from Reddit discussions
-- Use market_researcher to validate opportunities and research existing solutions
 - Focus on real problems people are actively discussing
-- Research competition thoroughly before recommending opportunities
-- Provide specific, actionable recommendations with supporting evidence from both sources
-- Synthesize insights from Reddit analysis AND market research for comprehensive recommendations
+- Look for recurring complaints and feature requests
+- Prioritize opportunities with strong evidence and market potential
+- Consider implementation complexity and time-to-market
+- Provide specific, actionable recommendations
+- Always include supporting evidence from Reddit discussions
 
-You coordinate specialists to provide the most comprehensive business opportunity analysis possible.""",
-                tools=[agent_tool.AgentTool(agent=reddit_agent), agent_tool.AgentTool(agent=market_research_agent)]
+You should be thorough but efficient, conducting multiple searches when needed to build a comprehensive understanding of opportunities.""",
+                tools=[self.search_reddit_for_ideas, self.evaluate_business_opportunity]
             )
         
         print(f"✅ Reddit Project Idea Finder Agent created: '{self.agent.name}'")
