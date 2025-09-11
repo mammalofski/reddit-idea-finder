@@ -1,2 +1,9 @@
-praw 
-python-dotenv
+# Core dependencies for Reddit Project Idea Finder Agent
+google-adk>=1.14.0
+praw>=7.8.0
+python-dotenv>=1.0.0
+
+# Optional dependencies for enhanced functionality
+asyncpraw>=7.0.0  # For better async support
+beautifulsoup4>=4.13.0  # For web scraping if needed
+jupyter>=1.0.0  # For running development notebooks
