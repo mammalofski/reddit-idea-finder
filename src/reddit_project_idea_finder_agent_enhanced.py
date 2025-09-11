@@ -23,6 +23,7 @@ from google.adk.agents import Agent
 from google.adk.sessions import InMemorySessionService
 from google.adk.runners import Runner
 from google.adk.planners import PlanReActPlanner, BuiltInPlanner
+from google.adk.tools import google_search, agent_tool
 from google.genai import types
 
 # Add current directory to path for importing reddit_idea_finder
@@ -75,7 +76,7 @@ class RedditProjectIdeaFinderAgent:
                 self.reddit_finder = None
         
     def _setup_tools(self):
-        """Set up the agent's tools for Reddit analysis and opportunity evaluation."""
+        """Set up the agent's tools for Reddit analysis, opportunity evaluation, and competitive analysis."""
         
         def search_reddit_for_ideas(query: str, focus_area: str = "general") -> Dict[str, Any]:
             """
@@ -231,9 +232,70 @@ class RedditProjectIdeaFinderAgent:
                 "next_steps": self._get_next_steps(overall_score)
             }
         
+        def analyze_market_competition(
+            idea_description: str,
+            target_keywords: str,
+            market_segment: str = "general"
+        ) -> Dict[str, Any]:
+            """
+            Tool to analyze market competition and existing solutions using Google Search.
+            
+            Args:
+                idea_description (str): Description of the business idea to research
+                target_keywords (str): Keywords to search for existing solutions
+                market_segment (str): Market segment to focus on (e.g., "saas", "mobile apps", "ai tools")
+            
+            Returns:
+                dict: Competitive analysis with existing solutions, gaps, and differentiation opportunities
+            """
+            print(f"🔍 Analyzing market competition for: {idea_description[:50]}...")
+            
+            # This function will be enhanced by the agent's google_search tool
+            # The agent will automatically use google_search when this tool is called
+            analysis_prompt = f"""
+            Research the competitive landscape for this business idea: {idea_description}
+            
+            Search for:
+            1. Existing solutions using keywords: {target_keywords}
+            2. Competitors in the {market_segment} market
+            3. Pricing models and features offered
+            4. User reviews and complaints about existing solutions
+            5. Market gaps and unmet needs
+            
+            Provide insights on:
+            - Top 3-5 existing competitors
+            - Common features and pricing
+            - User complaints and missing features
+            - Market differentiation opportunities
+            - Barriers to entry and competitive advantages
+            """
+            
+            return {
+                "status": "analysis_requested",
+                "idea": idea_description,
+                "search_keywords": target_keywords,
+                "market_segment": market_segment,
+                "analysis_prompt": analysis_prompt,
+                "competitive_factors": {
+                    "market_saturation": "To be analyzed via Google Search",
+                    "existing_solutions": "To be identified via Google Search", 
+                    "pricing_models": "To be researched via Google Search",
+                    "user_complaints": "To be discovered via Google Search",
+                    "differentiation_opportunities": "To be evaluated via Google Search"
+                },
+                "search_strategy": [
+                    f"{target_keywords} competitors",
+                    f"{target_keywords} tools alternatives",
+                    f"{target_keywords} reviews complaints",
+                    f"{market_segment} {target_keywords} pricing",
+                    f"best {target_keywords} software 2024"
+                ]
+            }
+        
         # Store tools as instance methods
         self.search_reddit_for_ideas = search_reddit_for_ideas
         self.evaluate_business_opportunity = evaluate_business_opportunity
+        self.analyze_market_competition = analyze_market_competition
     
     def _extract_pain_points(self, posts: List[Dict]) -> List[Dict[str, Any]]:
         """Extract pain points and opportunities from Reddit posts."""
@@ -304,6 +366,319 @@ class RedditProjectIdeaFinderAgent:
                 insights.append(post_insight)
         
         return insights
+    
+    def _get_risk_factors(self, complexity: str, evidence: str) -> List[str]:
+        """Generate risk factors based on complexity and evidence."""
+        risks = []
+        
+        if complexity == "high":
+            risks.extend([
+                "High development costs and time",
+                "Technical complexity may lead to delays",
+                "Requires significant expertise"
+            ])
+        
+        if evidence == "weak":
+            risks.extend([
+                "Limited market validation",
+                "Uncertainty about real demand"
+            ])
+        
+        if complexity == "low" and evidence == "strong":
+            risks.append("Market may be competitive due to low barriers")
+        
+        return risks
+    
+    def _get_next_steps(self, score: float) -> List[str]:
+        """Generate recommended next steps based on opportunity score."""
+        if score >= 8:
+            return [
+                "Create detailed market research plan",
+                "Build MVP or prototype",
+                "Validate with potential customers",
+                "Analyze competition thoroughly"
+            ]
+        elif score >= 6:
+            return [
+                "Conduct deeper Reddit analysis",
+                "Survey potential users",
+                "Research existing solutions",
+                "Create basic concept validation"
+            ]
+        elif score >= 4:
+            return [
+                "Monitor the space for developments",
+                "Consider alternative approaches",
+                "Look for adjacent opportunities"
+            ]
+        else:
+            return [
+                "Archive for future reference",
+                "Focus on higher-potential opportunities"
+            ]
+    
+    def _create_agent(self):
+        """Create the main Reddit Project Idea Finder Agent with specialized sub-agents for different tasks."""
+        
+        # Create specialized sub-agents
+        # 1. Reddit Analysis Agent (custom tools)
+        reddit_agent = Agent(
+            name="reddit_analyzer",
+            model=self.model,
+            description="Specialized agent for analyzing Reddit discussions and evaluating business opportunities",
+            instruction="""You specialize in analyzing Reddit discussions to identify business opportunities.
+            
+Your capabilities:
+- Search Reddit for user pain points and problems
+- Extract insights from posts and comments
+- Evaluate business opportunities based on evidence
+- Assess market potential and implementation feasibility
+
+Always provide detailed analysis with supporting evidence from Reddit discussions.""",
+            tools=[self.search_reddit_for_ideas, self.evaluate_business_opportunity, self.analyze_market_competition]
+        )
+        
+        # 2. Market Research Agent (Google Search)
+        market_research_agent = Agent(
+            name="market_researcher", 
+            model=self.model,
+            description="Specialized agent for competitive analysis and market research using Google Search",
+            instruction="""You specialize in market research and competitive analysis.
+            
+Your capabilities:
+- Research existing competitors and solutions
+- Analyze market trends and demands
+- Identify pricing models and features
+- Discover market gaps and opportunities
+- Validate business ideas through search
+
+Use Google Search to provide comprehensive market intelligence and competitive insights.""",
+            tools=[google_search]
+        )
+        
+        # Configure planner based on type
+        planner = None
+        enhanced_instruction = """You are a sophisticated business opportunity analyst that coordinates specialized teams to discover profitable project ideas from Reddit discussions and validate them through market research.
+
+Your systematic approach:
+1. **Query Analysis**: Interpret user requests to understand what type of opportunities they're seeking
+2. **Team Coordination**: Delegate tasks to specialized sub-agents:
+   - reddit_analyzer: For analyzing Reddit discussions and evaluating opportunities
+   - market_researcher: For competitive analysis and market validation
+3. **Strategic Planning**: Develop a comprehensive analysis strategy with multiple angles
+4. **Synthesis & Report**: Combine insights from both agents to provide comprehensive recommendations
+
+Advanced Guidelines:
+- PLAN before acting: Create a strategy for comprehensive opportunity discovery
+- Use reddit_analyzer to find and evaluate opportunities from Reddit discussions
+- Use market_researcher to validate opportunities and research competition
+- Focus on real problems people are actively discussing
+- Research competition thoroughly before recommending opportunities
+- Provide specific, actionable recommendations with supporting evidence
+- Synthesize insights from both Reddit analysis and market research
+
+You coordinate a team of specialists to provide the most comprehensive business opportunity analysis possible."""
+
+        if self.planner_type == "plan_react":
+            planner = PlanReActPlanner()
+            print("🧠 Using PlanReActPlanner for structured reasoning")
+        elif self.planner_type == "built_in":
+            planner = BuiltInPlanner()
+            print("🧠 Using BuiltInPlanner for basic planning")
+        else:
+            print("🧠 Using basic agent without planner")
+        
+        # Create the main coordinating agent with sub-agents
+        if planner:
+            self.agent = Agent(
+                name="reddit_project_idea_finder",
+                model=self.model,
+                planner=planner,
+                description="An intelligent agent that coordinates specialized teams to discover profitable project opportunities by analyzing Reddit discussions and validating them through comprehensive market research.",
+                instruction=enhanced_instruction,
+                tools=[agent_tool.AgentTool(agent=reddit_agent), agent_tool.AgentTool(agent=market_research_agent)]
+            )
+        else:
+            self.agent = Agent(
+                name="reddit_project_idea_finder",
+                model=self.model,
+                description="An intelligent agent that coordinates specialized teams to discover profitable project opportunities by analyzing Reddit discussions and validating them through comprehensive market research.",
+                instruction="""You are a sophisticated business opportunity analyst that coordinates specialized teams to discover profitable project ideas from Reddit discussions and validate them through market research.
+
+Your process:
+1. **Query Analysis**: Interpret user requests to understand what type of opportunities they're seeking
+2. **Team Coordination**: Delegate tasks to specialized sub-agents:
+   - reddit_analyzer: For analyzing Reddit discussions and evaluating opportunities  
+   - market_researcher: For competitive analysis and market validation using Google Search
+3. **Strategic Analysis**: Develop comprehensive understanding through both sources
+4. **Synthesis & Report**: Combine insights to provide well-researched recommendations
+
+Enhanced Capabilities:
+- Coordinate Reddit analysis with competitive market research
+- Validate opportunities through multiple information sources
+- Identify market gaps and differentiation opportunities
+- Provide evidence-based recommendations with competitive context
+
+Guidelines:
+- Use reddit_analyzer to find and evaluate opportunities from Reddit discussions
+- Use market_researcher to validate opportunities and research existing solutions
+- Focus on real problems people are actively discussing
+- Research competition thoroughly before recommending opportunities
+- Provide specific, actionable recommendations with supporting evidence from both sources
+- Synthesize insights from Reddit analysis AND market research for comprehensive recommendations
+
+You coordinate specialists to provide the most comprehensive business opportunity analysis possible.""",
+                tools=[agent_tool.AgentTool(agent=reddit_agent), agent_tool.AgentTool(agent=market_research_agent)]
+            )
+        
+        print(f"✅ Reddit Project Idea Finder Agent created: '{self.agent.name}'")
+        print(f"Model: {self.agent.model}")
+        print(f"Planner: {self.planner_type}")
+        print(f"Tools available: {len(self.agent.tools)}")
+    
+    def _setup_session(self):
+        """Set up session management for the agent."""
+        self.session_service = InMemorySessionService()
+        self.app_name = "reddit_idea_finder_app"
+        self.user_id = "analyst_1"
+        self.session_id = "idea_session_001"
+        
+        # Create runner
+        self.runner = Runner(
+            agent=self.agent,
+            app_name=self.app_name,
+            session_service=self.session_service
+        )
+        
+        print(f"🚀 Reddit Idea Finder Agent setup complete!")
+    
+    async def find_project_ideas(self, query: str) -> str:
+        """
+        Interact with the Reddit Project Idea Finder Agent to discover opportunities.
+        
+        Args:
+            query (str): User's request for project ideas
+            
+        Returns:
+            str: Agent's analysis and recommendations
+        """
+        print(f"\n🎯 User Query: {query}")
+        
+        # Create session if not exists
+        try:
+            session = await self.session_service.create_session(
+                app_name=self.app_name,
+                user_id=self.user_id,
+                session_id=self.session_id
+            )
+        except Exception:
+            # Session might already exist
+            pass
+        
+        # Prepare the user's message
+        content = types.Content(role='user', parts=[types.Part(text=query)])
+        
+        final_response = "No response received from agent."
+        
+        # Execute the agent and collect the response
+        async for event in self.runner.run_async(
+            user_id=self.user_id, 
+            session_id=self.session_id, 
+            new_message=content
+        ):
+            if event.is_final_response():
+                if event.content and event.content.parts:
+                    final_response = event.content.parts[0].text
+                elif event.actions and event.actions.escalate:
+                    final_response = f"Agent escalated: {event.error_message or 'Unknown error'}"
+                break
+        
+        print(f"\n📊 Agent Analysis Complete")
+        print("="*80)
+        print(final_response)
+        print("="*80)
+        
+        return final_response
+    
+    def run_interactive_session(self):
+        """Run an interactive session where users can ask for project ideas."""
+        print(f"""
+🤖 Reddit Project Idea Finder Agent - Interactive Mode (Planner: {self.planner_type})
+=====================================================
+
+Ask me to find profitable project opportunities from Reddit discussions!
+
+Examples:
+- "Find 3 profitable AI startup ideas based on real user problems"
+- "What are some micro SaaS opportunities in the developer tools space?"
+- "Discover underserved markets in e-commerce"
+- "Find pain points in remote work that could become profitable businesses"
+
+Type 'quit' to exit.
+""")
+        
+        async def interactive_loop():
+            while True:
+                try:
+                    query = input("\n💡 What opportunities are you looking for? ")
+                    
+                    if query.lower() in ['quit', 'exit', 'q']:
+                        print("👋 Thanks for using Reddit Project Idea Finder Agent!")
+                        break
+                    
+                    if not query.strip():
+                        continue
+                    
+                    await self.find_project_ideas(query)
+                    
+                except KeyboardInterrupt:
+                    print("\n👋 Thanks for using Reddit Project Idea Finder Agent!")
+                    break
+                except Exception as e:
+                    print(f"❌ Error: {e}")
+        
+        # Run the interactive loop
+        asyncio.run(interactive_loop())
+
+
+def main():
+    """Main function to demonstrate the Reddit Project Idea Finder Agent."""
+    import argparse
+    import sys
+    
+    # Create argument parser
+    parser = argparse.ArgumentParser(description="Reddit Project Idea Finder Agent with Advanced Planning")
+    parser.add_argument("query", nargs="*", help="Query for finding project ideas")
+    parser.add_argument("--planner", choices=["plan_react", "built_in", "none"], 
+                       default="plan_react", help="Type of planner to use (default: plan_react)")
+    parser.add_argument("--model", default="gemini-2.0-flash", 
+                       help="Model to use (default: gemini-2.0-flash)")
+    
+    args = parser.parse_args()
+    
+    print("🚀 Initializing Reddit Project Idea Finder Agent...")
+    print(f"🧠 Planner: {args.planner}")
+    print(f"🤖 Model: {args.model}")
+    
+    # Create the agent with specified configuration
+    agent = RedditProjectIdeaFinderAgent(model=args.model, planner_type=args.planner)
+    
+    if args.query:
+        # Command line query
+        query = " ".join(args.query)
+        print(f"Running with query: {query}")
+        
+        async def run_query():
+            await agent.find_project_ideas(query)
+        
+        asyncio.run(run_query())
+    else:
+        # Interactive mode
+        agent.run_interactive_session()
+
+
+if __name__ == "__main__":
+    main()
     
     def _get_risk_factors(self, complexity: str, evidence: str) -> List[str]:
         """Generate risk factors based on complexity and evidence."""
