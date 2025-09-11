@@ -1,2 +1,7 @@
 .env
 .venv
+
+test_*.ipynb
+
+__pycache__
+*.pyc

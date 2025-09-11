@@ -23,9 +23,10 @@ class RedditIdeaFinder:
         )
         print(f"Reddit instance created. Read-only mode: {self.reddit.read_only}")
     
-    def search_posts(self, query, subreddit_name="all", sort="relevance", time_filter="all", limit=25):
+    def search_posts(self, query, subreddit_name="all", sort="relevance", time_filter="all", limit=25, 
+                     include_comments=False, max_comments=5, comment_limit_more=2):
         """
-        Search Reddit posts using PRAW
+        Search Reddit posts using PRAW with optional comment fetching
         
         Args:
             query (str): Search query (e.g., "saas ideas")
@@ -33,9 +34,12 @@ class RedditIdeaFinder:
             sort (str): Sort method - "relevance", "hot", "top", "new", "comments"
             time_filter (str): Time filter - "all", "day", "hour", "month", "week", "year"
             limit (int): Number of results to return (default: 25)
+            include_comments (bool): Whether to fetch comments for each post (default: False)
+            max_comments (int): Maximum number of comments to fetch per post (0 for all)
+            comment_limit_more (int): Limit for MoreComments replacement (default: 2)
         
         Returns:
-            list: List of dictionaries containing post information
+            list: List of dictionaries containing post information with optional comments
         """
         try:
             # Get the subreddit
@@ -63,14 +67,68 @@ class RedditIdeaFinder:
                     'permalink': f"https://reddit.com{submission.permalink}",
                     'selftext': submission.selftext[:300] + "..." if len(submission.selftext) > 300 else submission.selftext,
                     'is_self': submission.is_self,
-                    'id': submission.id
+                    'id': submission.id,
+                    'comments': []  # Initialize empty comments list
                 }
+                
+                # Fetch comments if requested
+                if include_comments:
+                    print(f"Fetching comments for: {submission.title[:50]}...")
+                    post_data['comments'] = self.fetch_post_comments(
+                        submission, max_comments, comment_limit_more
+                    )
+                
                 posts.append(post_data)
             
             return posts
         
         except Exception as e:
             print(f"Error searching Reddit: {e}")
+            return []
+    
+    def fetch_post_comments(self, submission, max_comments=10, limit_more=5):
+        """
+        Fetch comments for a specific Reddit post submission
+        
+        Args:
+            submission: PRAW submission object
+            max_comments (int): Maximum number of comments to return (0 for all)
+            limit_more (int): Limit for MoreComments replacement (0 to remove all, None for all)
+        
+        Returns:
+            list: List of comment dictionaries
+        """
+        try:
+            # Replace MoreComments objects with actual comments
+            # limit=5 means replace up to 5 "load more comments" sections
+            # This balances between getting enough comments and API rate limits
+            submission.comments.replace_more(limit=limit_more)
+            
+            # Get all comments as a flat list
+            all_comments = submission.comments.list()
+            
+            comments_data = []
+            for i, comment in enumerate(all_comments):
+                if max_comments > 0 and i >= max_comments:
+                    break
+                    
+                comment_data = {
+                    'id': comment.id,
+                    'body': comment.body,
+                    'author': str(comment.author) if comment.author else '[deleted]',
+                    'score': comment.score,
+                    'created_utc': datetime.fromtimestamp(comment.created_utc),
+                    'parent_id': comment.parent_id,
+                    'is_submitter': comment.is_submitter,
+                    'depth': getattr(comment, 'depth', 0),
+                    'permalink': f"https://reddit.com{comment.permalink}"
+                }
+                comments_data.append(comment_data)
+            
+            return comments_data
+        
+        except Exception as e:
+            print(f"  Error fetching comments: {e}")
             return []
     
     def filter_high_quality_posts(self, posts, min_score=5, min_comments=2):
@@ -108,7 +166,7 @@ Average comments: {avg_comments:.1f}
         
         return analysis
     
-    def search_and_save(self, queries, filename="reddit_search_results.json"):
+    def search_and_save(self, queries, filename="reddit_search_results.json", include_comments=False, max_comments=5):
         """Search for multiple queries and save results to a JSON file"""
         all_results = {}
         
@@ -119,7 +177,9 @@ Average comments: {avg_comments:.1f}
                 subreddit_name="entrepreneur+startups+SaaS+business+sideproject",
                 sort="top",
                 time_filter="month",
-                limit=15
+                limit=15,
+                include_comments=include_comments,
+                max_comments=max_comments
             )
             all_results[query] = results
             print(f"Found {len(results)} posts for '{query}'")
@@ -131,7 +191,7 @@ Average comments: {avg_comments:.1f}
         print(f"\nResults saved to {filename}")
         return all_results
     
-    def quick_idea_search(self, idea_type="saas"):
+    def quick_idea_search(self, idea_type="saas", include_comments=False, max_comments=3):
         """Quick search for different types of business ideas"""
         search_terms = {
             "saas": "saas ideas OR micro saas OR software ideas",
@@ -142,10 +202,11 @@ Average comments: {avg_comments:.1f}
         }
         
         query = search_terms.get(idea_type.lower(), idea_type)
-        return self.search_posts(query, "entrepreneur+startups+business", limit=20)
+        return self.search_posts(query, "entrepreneur+startups+business", limit=20, 
+                                include_comments=include_comments, max_comments=max_comments)
     
-    def display_posts(self, posts, title="Search Results"):
-        """Display posts in a formatted way"""
+    def display_posts(self, posts, title="Search Results", show_comments=True):
+        """Display posts in a formatted way with optional comments"""
         print(f"\n{title}")
         print("="*80)
         
@@ -156,49 +217,81 @@ Average comments: {avg_comments:.1f}
             if post['selftext']:
                 print(f"   Text: {post['selftext']}")
             print(f"   Link: {post['permalink']}")
+            
+            # Display comments if available and requested
+            if show_comments and 'comments' in post and post['comments']:
+                print(f"\n   💬 TOP COMMENTS ({len(post['comments'])} fetched):")
+                for j, comment in enumerate(post['comments'][:3], 1):  # Show top 3 comments
+                    print(f"      {j}. u/{comment['author']} (Score: {comment['score']})")
+                    comment_text = comment['body'][:100] + "..." if len(comment['body']) > 100 else comment['body']
+                    print(f"         {comment_text}")
+                if len(post['comments']) > 3:
+                    print(f"         ... and {len(post['comments']) - 3} more comments")
+            elif show_comments and 'comments' in post:
+                print(f"   💬 No comments fetched")
+            
             print("-" * 60)
 
 
 def main():
-    """Main function demonstrating the Reddit Idea Finder"""
+    """Main function demonstrating the Reddit Idea Finder with comment fetching"""
     finder = RedditIdeaFinder()
     
-    # Example 1: Search for SaaS ideas
+    # Example 1: Search for SaaS ideas (without comments for speed)
     print("🔍 Searching for SaaS ideas...")
     saas_posts = finder.search_posts(
         query="saas ideas",
         subreddit_name="entrepreneur+startups+SaaS",
         sort="relevance",
         time_filter="month",
-        limit=10
+        limit=5,  # Reduced for demo
+        include_comments=False
     )
     
-    finder.display_posts(saas_posts, "SaaS Ideas from Reddit")
+    finder.display_posts(saas_posts, "SaaS Ideas from Reddit", show_comments=False)
     
-    # Example 2: Analyze results
+    # Example 2: Search with comments (smaller sample)
+    print("\n🔍 Searching for micro SaaS ideas WITH COMMENTS...")
+    micro_saas_posts = finder.search_posts(
+        query="micro saas",
+        subreddit_name="SaaS",
+        sort="top",
+        time_filter="month",
+        limit=2,  # Small sample to avoid rate limits
+        include_comments=True,
+        max_comments=3,
+        comment_limit_more=1
+    )
+    
+    finder.display_posts(micro_saas_posts, "Micro SaaS Ideas with Comments", show_comments=True)
+    
+    # Example 3: Analyze results
     print(finder.analyze_results(saas_posts))
     
-    # Example 3: Filter high-quality posts
-    high_quality = finder.filter_high_quality_posts(saas_posts, min_score=8, min_comments=15)
-    finder.display_posts(high_quality, "High Quality Posts")
+    # Example 4: Filter high-quality posts
+    high_quality = finder.filter_high_quality_posts(saas_posts, min_score=5, min_comments=10)
+    finder.display_posts(high_quality, "High Quality Posts", show_comments=False)
     
-    # Example 4: Quick search for different idea types
-    print("\n🚀 Quick AI Startup Ideas Search...")
-    ai_posts = finder.quick_idea_search("ai")
-    finder.display_posts(ai_posts[:5], "AI Startup Ideas (Top 5)")
+    # Example 5: Quick search for different idea types WITH comments
+    print("\n🚀 Quick AI Startup Ideas Search with Comments...")
+    ai_posts = finder.quick_idea_search("ai", include_comments=True, max_comments=2)
+    finder.display_posts(ai_posts[:2], "AI Startup Ideas (Top 2 with Comments)", show_comments=True)
     
-    # Example 5: Search and save multiple queries
-    print("\n💾 Searching and saving multiple queries...")
+    # Example 6: Search and save multiple queries with comments
+    print("\n💾 Searching and saving multiple queries with comments...")
     idea_queries = [
-        "saas ideas",
-        "startup ideas 2024",
-        "micro saas",
-        "profitable business ideas"
+        "profitable saas ideas",
+        "micro saas 2024"
     ]
     
-    # Uncomment the line below to run the search and save
-    # results = finder.search_and_save(idea_queries, "idea_search_results.json")
-    print("Search and save example ready (uncomment to run)")
+    # Uncomment the line below to run the search and save with comments
+    # results = finder.search_and_save(idea_queries, "idea_search_results_with_comments.json", 
+    #                                 include_comments=True, max_comments=3)
+    print("Search and save example ready (uncomment to run with comments)")
+    
+    print("\n✅ Demo completed! Comments are now integrated into all search functions.")
+    print("💡 Use include_comments=True in any search method to fetch comments.")
+    print("⚡ Adjust max_comments and comment_limit_more to control API usage.")
 
 
 if __name__ == "__main__":
