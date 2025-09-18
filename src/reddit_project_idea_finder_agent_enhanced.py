@@ -45,12 +45,12 @@ class RedditProjectIdeaFinderAgent:
     Enhanced with planning capabilities for systematic opportunity discovery.
     """
     
-    def __init__(self, model="gemini-2.0-flash", planner_type="plan_react"):
+    def __init__(self, model="gemini-2.5-flash", planner_type="plan_react"):
         """
         Initialize the Reddit Project Idea Finder Agent.
         
         Args:
-            model (str): Model to use for the agent (default: gemini-2.0-flash)
+            model (str): Model to use for the agent (default: gemini-2.5-flash)
             planner_type (str): Type of planner to use:
                 - "plan_react": PlanReActPlanner for structured reasoning (default)
                 - "built_in": BuiltInPlanner with thinking capabilities

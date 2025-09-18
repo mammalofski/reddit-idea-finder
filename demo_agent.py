@@ -32,6 +32,7 @@ try:
             # result = await agent.run_interactive_session()
             
             print("\n✅ Demo completed successfully!")
+            print(f"Result: {result}")
             
         except Exception as e:
             print(f"⚠️ Demo running in limited mode due to: {e}")
