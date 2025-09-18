@@ -1,0 +1,23 @@
+title,url,score,num_comments,subreddit,created_utc,summary
+Gpt-oss Fine-tuning - now with 60K context length and fits on <13GB VRAM,https://reddit.comhttps://reddit.com/r/LocalLLaMA/comments/1n2jraj/gptoss_finetuning_now_with_60k_context_length_and/,594,69,LocalLLaMA,2025-08-28 12:12:00,Hey guys we've got LOTS of updates for gpt-oss training today! We’re excited to introduce [Unsloth](https://github.com/unslothai/unsloth) Flex Attention support for OpenAI gpt-oss training that enable...
+"Open-Sourcing Medical LLM which Scores 85.8% on USMLE-Style Questions, Beating Similar Models - 𝙽𝙴𝙴𝚃𝙾–𝟷.𝟶–𝟾𝙱 🚀",https://reddit.comhttps://reddit.com/r/LocalLLaMA/comments/1n4wf0j/opensourcing_medical_llm_which_scores_858_on/,237,27,LocalLLaMA,2025-08-31 08:39:22,"I've spent the last 2 months building something that might change how students prepare USMLE/UKMLE/NEET-PG forever. Meet **Neeto-1.0-8B** \- a specialized, 8-billion-parameter biomedical LLM fine-tune..."
+vLLM is kinda awesome,https://reddit.comhttps://reddit.com/r/LocalLLaMA/comments/1nh86i7/vllm_is_kinda_awesome/,134,47,LocalLLaMA,2025-09-14 18:58:41,"https://preview.redd.it/vs0d2b3098pf1.png?width=3000&format=png&auto=webp&s=c1071464f396e186209597ad86acf5ac891b6bf8
+
+The last time I ran this test on this card via **LCP** it took **2 hours 46 minute..."
+[R] ΔAPT: critical review aimed at maximizing clinical outcomes in AI/LLM Psychotherapy,https://reddit.comhttps://reddit.com/r/MachineLearning/comments/1n0vcrb/r_δapt_critical_review_aimed_at_maximizing/,118,5,MachineLearning,2025-08-26 13:28:44,"Hi reddit, wanted to share my thesis on AI / LLM psychotherapy @ [https://osf.io/preprints/psyarxiv/4tmde\_v1](https://osf.io/preprints/psyarxiv/4tmde_v1?fbclid=IwZXh0bgNhZW0CMTAAYnJpZBExNHhlVkhlWWpDV..."
+Finetuning Qwen3 on my Mac: A Descent into Madness (and some fun along the way),https://reddit.comhttps://reddit.com/r/LocalLLaMA/comments/1n3c3ve/finetuning_qwen3_on_my_mac_a_descent_into_madness/,112,51,LocalLLaMA,2025-08-29 10:28:46,"I wanted to post my own locallama journey (in this case local Qwen).  I've been trying to reclaim AI as a local tool.  I have trained a few miniature llamas before, but this was my first thinking mode..."
+We open-sourced Memori: A memory engine for AI agents,https://reddit.comhttps://reddit.com/r/LocalLLaMA/comments/1mto88l/we_opensourced_memori_a_memory_engine_for_ai/,84,14,LocalLLaMA,2025-08-18 08:51:39,"Hey folks!
+
+I'm a part the team behind [Memori](https://memori.gibsonai.com/).
+
+Memori adds a stateful memory engine to AI agents, enabling them to stay consistent, recall past work, and improve over ..."
+DiffMem: Using Git as a Differential Memory Backend for AI Agents - Open-Source PoC,https://reddit.comhttps://reddit.com/r/LocalLLaMA/comments/1mvgw9k/diffmem_using_git_as_a_differential_memory/,71,24,LocalLLaMA,2025-08-20 08:48:46,"We've been experimenting with memory systems for AI agents, and I wanted to share a prototype I've built: DiffMem. It's a lightweight, Git-based memory backend that stores ""current state"" knowledge in..."
+Local Inference for Very Large Models - a Look at Current Options,https://reddit.comhttps://reddit.com/r/LocalLLaMA/comments/1n1h6xx/local_inference_for_very_large_models_a_look_at/,69,71,LocalLLaMA,2025-08-27 07:33:58,"Hello all. I've been considering upgrading my hardware to run larger models locally, and thought I might get some thoughts from the community. *Fair warning - this is a bit of a hardware rant*. 
+
+Curr..."
+WarLlama: 2x MI50 LLM MicroATX Server,https://reddit.comhttps://reddit.com/r/LocalLLaMA/comments/1nfqr69/warllama_2x_mi50_llm_microatx_server/,62,29,LocalLLaMA,2025-09-13 00:55:54,"Some ppl on this sub have Ahab-class dreadnoughts rocking a DeepSeek/Kimi high quant. Other have a warhorse w a giant gpu or six (or 16x?). This is my sleek lil *warllama*. 
+
+It's is not abt the bling..."
+Engineer's Guide to Local LLMs with LLaMA.cpp and QwenCode on Linux,https://reddit.comhttps://reddit.com/r/LocalLLaMA/comments/1nhh1v1/engineers_guide_to_local_llms_with_llamacpp_and/,60,15,LocalLLaMA,2025-09-15 03:20:37,"# Introduction
+
+In this write up I will share my local AI setup on Ubuntu that I use for my personal projects as well as professional workflows (local chat, agentic workflows, coding agents, data anal..."

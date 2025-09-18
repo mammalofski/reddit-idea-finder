@@ -1,0 +1,15 @@
+the main agent is the multi agent planning one and the enhanced version has google search features but a simple agent
+did try to merge them, not sure if it worked perfectly
+test it
+
+then,
+the agent should have multi agent and planning capabilities
+needs to reference to the reddit links for each idea
+needs to be able to verify with google
+
+
+could also try building another one with langgraphs deep agent
+
+also the code in main branch seems more stble
+
+better to enhance the agent to find ideas in alrady validated market

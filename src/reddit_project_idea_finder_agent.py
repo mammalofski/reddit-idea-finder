@@ -87,7 +87,8 @@ class RedditProjectIdeaFinderAgent:
                     "status": "error",
                     "error": "Reddit API not available. Check credentials.",
                     "posts": [],
-                    "insights": []
+                    "insights": [],
+                    "supporting_links": {}
                 }
             
             try:
@@ -119,6 +120,9 @@ class RedditProjectIdeaFinderAgent:
                 # Extract pain points and opportunities
                 insights = self._extract_pain_points(quality_posts)
                 
+                # Collect supporting Reddit links
+                supporting_links = self._collect_supporting_links(quality_posts, insights)
+                
                 return {
                     "status": "success",
                     "query": query,
@@ -127,7 +131,8 @@ class RedditProjectIdeaFinderAgent:
                     "total_posts_found": len(posts),
                     "quality_posts": len(quality_posts),
                     "posts": quality_posts[:5],  # Return top 5 for analysis
-                    "insights": insights
+                    "insights": insights,
+                    "supporting_links": supporting_links
                 }
                 
             except Exception as e:
@@ -135,7 +140,8 @@ class RedditProjectIdeaFinderAgent:
                     "status": "error",
                     "error": f"Search failed: {str(e)}",
                     "posts": [],
-                    "insights": []
+                    "insights": [],
+                    "supporting_links": {}
                 }
         
         def evaluate_business_opportunity(
@@ -223,9 +229,99 @@ class RedditProjectIdeaFinderAgent:
                 "next_steps": self._get_next_steps(overall_score)
             }
         
+        def format_supporting_links(supporting_links_data: Dict[str, Any]) -> Dict[str, Any]:
+            """
+            Tool to format supporting Reddit links into a structured, presentable format.
+            
+            Args:
+                supporting_links_data (dict): Raw supporting links data from search results
+                
+            Returns:
+                dict: Formatted and categorized supporting links for presentation
+            """
+            print("🔗 Formatting supporting Reddit links...")
+            
+            if not supporting_links_data or "supporting_links" not in supporting_links_data:
+                return {
+                    "status": "no_links",
+                    "message": "No supporting links found in the data",
+                    "formatted_links": {}
+                }
+            
+            supporting_links = supporting_links_data["supporting_links"]
+            
+            # Format links by category with enhanced presentation
+            formatted_output = {
+                "status": "success",
+                "total_links": len(supporting_links.get("all_links", [])),
+                "categories": {
+                    "high_priority": {
+                        "title": "🔥 High-Priority Discussions",
+                        "description": "Most upvoted and discussed posts with strong community engagement",
+                        "count": len(supporting_links.get("high_priority", [])),
+                        "links": []
+                    },
+                    "pain_points": {
+                        "title": "😤 Pain Points & Problems",
+                        "description": "Posts highlighting specific user frustrations and unmet needs",
+                        "count": len(supporting_links.get("pain_points", [])),
+                        "links": []
+                    },
+                    "opportunities": {
+                        "title": "💡 Business Opportunities",
+                        "description": "Discussions suggesting potential solutions and market gaps",
+                        "count": len(supporting_links.get("opportunities", [])),
+                        "links": []
+                    },
+                    "evidence": {
+                        "title": "📊 Supporting Evidence",
+                        "description": "Additional posts and comments that validate the opportunities",
+                        "count": len(supporting_links.get("evidence", [])),
+                        "links": []
+                    }
+                },
+                "summary": {
+                    "search_query": supporting_links_data.get("query", "Unknown"),
+                    "focus_area": supporting_links_data.get("focus_area", "general"),
+                    "subreddits": supporting_links_data.get("subreddits_searched", ""),
+                    "total_posts_analyzed": supporting_links_data.get("total_posts_found", 0)
+                }
+            }
+            
+            # Format each category
+            for category_key, category_data in formatted_output["categories"].items():
+                category_links = supporting_links.get(category_key, [])
+                
+                for link in category_links:
+                    formatted_link = {
+                        "title": link["title"],
+                        "url": link["url"],
+                        "score": link.get("score", 0),
+                        "subreddit": link.get("subreddit", ""),
+                        "summary": link.get("summary", "")
+                    }
+                    
+                    # Add category-specific metadata
+                    if category_key == "pain_points" and "pain_points" in link:
+                        formatted_link["identified_pain_points"] = link["pain_points"]
+                    elif category_key == "opportunities" and "opportunities" in link:
+                        formatted_link["identified_opportunities"] = link["opportunities"]
+                    elif category_key == "evidence" and "evidence_count" in link:
+                        formatted_link["evidence_items"] = link["evidence_count"]
+                    elif category_key == "high_priority":
+                        formatted_link["comments"] = link.get("num_comments", 0)
+                    
+                    category_data["links"].append(formatted_link)
+                
+                # Sort links by score (highest first) within each category
+                category_data["links"].sort(key=lambda x: x.get("score", 0), reverse=True)
+            
+            return formatted_output
+        
         # Store tools as instance methods
         self.search_reddit_for_ideas = search_reddit_for_ideas
         self.evaluate_business_opportunity = evaluate_business_opportunity
+        self.format_supporting_links = format_supporting_links
     
     def _extract_pain_points(self, posts: List[Dict]) -> List[Dict[str, Any]]:
         """Extract pain points and opportunities from Reddit posts."""
@@ -297,6 +393,80 @@ class RedditProjectIdeaFinderAgent:
         
         return insights
     
+    def _collect_supporting_links(self, posts: List[Dict], insights: List[Dict[str, Any]]) -> Dict[str, List[Dict[str, Any]]]:
+        """
+        Collect and categorize supporting Reddit links from discovered posts and insights.
+        
+        Args:
+            posts: List of Reddit posts from the search
+            insights: List of extracted insights with pain points and opportunities
+            
+        Returns:
+            dict: Categorized supporting links with metadata
+        """
+        supporting_links = {
+            "high_priority": [],  # Posts with strong evidence and high scores
+            "pain_points": [],    # Posts highlighting specific problems
+            "opportunities": [],  # Posts suggesting business opportunities
+            "evidence": [],       # Additional supporting evidence
+            "all_links": []       # Complete list for reference
+        }
+        
+        # Process posts and categorize by relevance and content type
+        for post in posts:
+            full_url = f"https://reddit.com{post['permalink']}"
+            link_data = {
+                "title": post["title"],
+                "url": full_url,
+                "score": post["score"],
+                "num_comments": post["num_comments"],
+                "subreddit": post["subreddit"],
+                "created_utc": post.get("created_utc", 0),
+                "summary": post.get("selftext", "")[:200] + "..." if post.get("selftext", "") else ""
+            }
+            
+            # Add to all_links for complete reference
+            supporting_links["all_links"].append(link_data)
+            
+            # Categorize based on score and content
+            if post["score"] >= 10 and post["num_comments"] >= 5:
+                supporting_links["high_priority"].append(link_data)
+        
+        # Process insights to categorize links by pain points and opportunities
+        for insight in insights:
+            full_url = f"https://reddit.com{insight['post_url']}"
+            link_data = {
+                "title": insight["post_title"],
+                "url": full_url,
+                "score": insight["score"],
+                "summary": f"Contains {len(insight['pain_points'])} pain points, {len(insight['opportunities'])} opportunities, {len(insight['evidence'])} evidence items"
+            }
+            
+            # Categorize by content type
+            if insight["pain_points"]:
+                link_data["pain_points"] = [pp["keyword"] for pp in insight["pain_points"]]
+                supporting_links["pain_points"].append(link_data)
+            
+            if insight["opportunities"]:
+                link_data["opportunities"] = [op["keyword"] for op in insight["opportunities"]]
+                supporting_links["opportunities"].append(link_data)
+            
+            if insight["evidence"]:
+                link_data["evidence_count"] = len(insight["evidence"])
+                supporting_links["evidence"].append(link_data)
+        
+        # Remove duplicates while preserving order
+        for category in supporting_links:
+            seen_urls = set()
+            unique_links = []
+            for link in supporting_links[category]:
+                if link["url"] not in seen_urls:
+                    seen_urls.add(link["url"])
+                    unique_links.append(link)
+            supporting_links[category] = unique_links
+        
+        return supporting_links
+    
     def _get_risk_factors(self, complexity: str, evidence: str) -> List[str]:
         """Generate risk factors based on complexity and evidence."""
         risks = []
@@ -360,8 +530,9 @@ Your process:
 2. **Strategic Search**: Use search_reddit_for_ideas to find relevant discussions about problems, pain points, and unmet needs
 3. **Deep Analysis**: Examine posts and comments to identify patterns of user frustration and desired solutions
 4. **Opportunity Evaluation**: Use evaluate_business_opportunity to assess market potential and feasibility
-5. **Recursive Investigation**: If initial findings suggest promising areas, conduct follow-up searches for deeper insights
-6. **Report Generation**: Provide 3-5 well-researched project recommendations with clear reasoning
+5. **Supporting Links Generation**: Use format_supporting_links to provide categorized Reddit links that back up your findings
+6. **Recursive Investigation**: If initial findings suggest promising areas, conduct follow-up searches for deeper insights
+7. **Report Generation**: Provide 3-5 well-researched project recommendations with clear reasoning and supporting links
 
 Guidelines:
 - Focus on real problems people are actively discussing
@@ -370,9 +541,18 @@ Guidelines:
 - Consider implementation complexity and time-to-market
 - Provide specific, actionable recommendations
 - Always include supporting evidence from Reddit discussions
+- Generate and present categorized supporting Reddit links for each search conducted
+- Format supporting links to show high-priority discussions, pain points, opportunities, and evidence separately
+
+Output Format:
+For each analysis, always provide:
+1. Executive summary of findings
+2. 3-5 specific project recommendations with evaluation scores
+3. Categorized supporting Reddit links organized by relevance and content type
+4. Risk factors and next steps for each opportunity
 
 You should be thorough but efficient, conducting multiple searches when needed to build a comprehensive understanding of opportunities.""",
-            tools=[self.search_reddit_for_ideas, self.evaluate_business_opportunity]
+            tools=[self.search_reddit_for_ideas, self.evaluate_business_opportunity, self.format_supporting_links]
         )
         
         print(f"✅ Reddit Project Idea Finder Agent created: '{self.agent.name}'")

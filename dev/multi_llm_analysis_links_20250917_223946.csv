@@ -1,0 +1,31 @@
+title,url,score,num_comments,subreddit,created_utc,summary
+Building RAG systems at enterprise scale (20K+ docs): lessons from 10+ enterprise implementations,https://reddit.comhttps://reddit.com/r/LocalLLaMA/comments/1ned2ai/building_rag_systems_at_enterprise_scale_20k_docs/,372,106,LocalLLaMA,2025-09-11 10:16:40,"Been building RAG systems for mid-size enterprise companies in the regulated space (100-1000 employees) for the past year and to be honest, this stuff is way harder than any tutorial makes it seem. Wo..."
+"PyDevMini-1: A 4B model that matches/outperforms GPT-4 on Python & Web Dev Code, At 1/400th the Size!",https://reddit.comhttps://reddit.com/r/LocalLLaMA/comments/1ncam9h/pydevmini1_a_4b_model_that_matchesoutperforms/,353,107,LocalLLaMA,2025-09-08 23:30:13,"Hey everyone,
+
+[https://huggingface.co/bralynn/pydevmini1](https://huggingface.co/bralynn/pydevmini1)
+
+Today, I'm incredibly excited to release **PyDevMini-1**, a 4B parameter model to provide GPT-4 l..."
+Finetuning Qwen3 on my Mac: A Descent into Madness (and some fun along the way),https://reddit.comhttps://reddit.com/r/LocalLLaMA/comments/1n3c3ve/finetuning_qwen3_on_my_mac_a_descent_into_madness/,113,51,LocalLLaMA,2025-08-29 10:28:46,"I wanted to post my own locallama journey (in this case local Qwen).  I've been trying to reclaim AI as a local tool.  I have trained a few miniature llamas before, but this was my first thinking mode..."
+[D] How do you stay current with AI/ML research and tools in 2025? (Cybersec engineer catching up after Transformers),https://reddit.comhttps://reddit.com/r/MachineLearning/comments/1nbhqmq/d_how_do_you_stay_current_with_aiml_research_and/,106,20,MachineLearning,2025-09-08 01:58:03,"Hi everyone,
+
+I’m a cybersecurity and network engineer/sysadmin by profession, but I studied AI/ML quite seriously at university. My knowledge is solid up until around the Transformer era (when attent..."
+New Ernie X1.1 - what may be the best Chinese model since DeepSeek V3.1 slowly approaches the frontier (or a simple test that exposes so many models),https://reddit.comhttps://reddit.com/r/LocalLLaMA/comments/1ndjoek/new_ernie_x11_what_may_be_the_best_chinese_model/,94,30,LocalLLaMA,2025-09-10 10:53:13,"Baidu, the Chinese Google, recently released a couple of new models - an update to open source Ernie 4.5 and proprietary Ernie X1.1:
+
+https://preview.redd.it/vn2uss2lqcof1.png?width=526&format=png&aut..."
+My open-source agent Maestro is now faster and lets you configure context limits for better local model support,https://reddit.comhttps://reddit.com/r/LocalLLaMA/comments/1mtfw5j/my_opensource_agent_maestro_is_now_faster_and/,90,21,LocalLLaMA,2025-08-18 02:04:36,"Hey r/LocalLLaMA,
+
+I just pushed a big update for Maestro, my open-source AI research agent. I've focused on making it work better with local models.
+
+The biggest change is that you can now fully conf..."
+I am over AI,https://reddit.comhttps://reddit.com/r/artificial/comments/1nf9sd7/i_am_over_ai/,70,187,artificial,2025-09-12 11:45:35," I have been pretty open to AI, thought it was exciting, used it to help me debug some code a little video game I made. I even paid for Claude and would bounce ideas off it and ask questions.... 
+
+Aft..."
+Kimi K2 Appreciation Post,https://reddit.comhttps://reddit.com/r/LocalLLaMA/comments/1muvta3/kimi_k2_appreciation_post/,49,28,LocalLLaMA,2025-08-19 15:33:27,"Dipping my toe into r/LocalLLaMA community engagement after being an orbiter for some time.
+
+Kimi K2 is... something else. And I just have to ramble about it.
+
+For context, the vast majority of my LLM..."
+~$15K Inference Workstation for a 250+ Gov Org,https://reddit.comhttps://reddit.com/r/LocalLLaMA/comments/1nbbgab/15k_inference_workstation_for_a_250_gov_org/,35,50,LocalLLaMA,2025-09-07 20:02:10,"Hello I saw a post on here asking for an idea of an inference setup for a school and figured I'd also see what this community thinks of the setup I've been tasked with building. 
+
+For some context I w..."
+"Thank you r/LocalLLaMA for your feedback and support. I'm finally proud to show you how simple it is to use Observer (OSS and 100% Local)! Agents can now store images in their memory, unlocking a lot of new use cases!",https://reddit.comhttps://reddit.com/r/LocalLLaMA/comments/1nh3ngq/thank_you_rlocalllama_for_your_feedback_and/,27,16,LocalLLaMA,2025-09-14 15:35:56,"**TL;DR:** The open-source tool that lets local LLMs watch your screen is now rock solid for heavy use! This is what you guys have used it for: (What you've told me, I don't have a way to know because..."

@@ -1,0 +1,248 @@
+{
+  "status": "success",
+  "total_links": 10,
+  "categories": {
+    "high_priority": {
+      "title": "\ud83d\udd25 High-Priority Discussions",
+      "description": "Most upvoted and discussed posts with strong community engagement",
+      "count": 10,
+      "links": [
+        {
+          "title": "Gpt-oss Fine-tuning - now with 60K context length and fits on <13GB VRAM",
+          "url": "https://reddit.comhttps://reddit.com/r/LocalLLaMA/comments/1n2jraj/gptoss_finetuning_now_with_60k_context_length_and/",
+          "score": 594,
+          "subreddit": "LocalLLaMA",
+          "summary": "Hey guys we've got LOTS of updates for gpt-oss training today! We\u2019re excited to introduce [Unsloth](https://github.com/unslothai/unsloth) Flex Attention support for OpenAI gpt-oss training that enable...",
+          "comments": 69
+        },
+        {
+          "title": "Open-Sourcing Medical LLM which Scores 85.8% on USMLE-Style Questions, Beating Similar Models - \ud835\ude7d\ud835\ude74\ud835\ude74\ud835\ude83\ud835\ude7e\u2013\ud835\udff7.\ud835\udff6\u2013\ud835\udffe\ud835\ude71 \ud83d\ude80",
+          "url": "https://reddit.comhttps://reddit.com/r/LocalLLaMA/comments/1n4wf0j/opensourcing_medical_llm_which_scores_858_on/",
+          "score": 237,
+          "subreddit": "LocalLLaMA",
+          "summary": "I've spent the last 2 months building something that might change how students prepare USMLE/UKMLE/NEET-PG forever. Meet **Neeto-1.0-8B** \\- a specialized, 8-billion-parameter biomedical LLM fine-tune...",
+          "comments": 27
+        },
+        {
+          "title": "vLLM is kinda awesome",
+          "url": "https://reddit.comhttps://reddit.com/r/LocalLLaMA/comments/1nh86i7/vllm_is_kinda_awesome/",
+          "score": 134,
+          "subreddit": "LocalLLaMA",
+          "summary": "https://preview.redd.it/vs0d2b3098pf1.png?width=3000&format=png&auto=webp&s=c1071464f396e186209597ad86acf5ac891b6bf8\n\nThe last time I ran this test on this card via **LCP** it took **2 hours 46 minute...",
+          "comments": 47
+        },
+        {
+          "title": "[R] \u0394APT: critical review aimed at maximizing clinical outcomes in AI/LLM Psychotherapy",
+          "url": "https://reddit.comhttps://reddit.com/r/MachineLearning/comments/1n0vcrb/r_\u03b4apt_critical_review_aimed_at_maximizing/",
+          "score": 118,
+          "subreddit": "MachineLearning",
+          "summary": "Hi reddit, wanted to share my thesis on AI / LLM psychotherapy @ [https://osf.io/preprints/psyarxiv/4tmde\\_v1](https://osf.io/preprints/psyarxiv/4tmde_v1?fbclid=IwZXh0bgNhZW0CMTAAYnJpZBExNHhlVkhlWWpDV...",
+          "comments": 5
+        },
+        {
+          "title": "Finetuning Qwen3 on my Mac: A Descent into Madness (and some fun along the way)",
+          "url": "https://reddit.comhttps://reddit.com/r/LocalLLaMA/comments/1n3c3ve/finetuning_qwen3_on_my_mac_a_descent_into_madness/",
+          "score": 112,
+          "subreddit": "LocalLLaMA",
+          "summary": "I wanted to post my own locallama journey (in this case local Qwen).  I've been trying to reclaim AI as a local tool.  I have trained a few miniature llamas before, but this was my first thinking mode...",
+          "comments": 51
+        },
+        {
+          "title": "We open-sourced Memori: A memory engine for AI agents",
+          "url": "https://reddit.comhttps://reddit.com/r/LocalLLaMA/comments/1mto88l/we_opensourced_memori_a_memory_engine_for_ai/",
+          "score": 84,
+          "subreddit": "LocalLLaMA",
+          "summary": "Hey folks!\n\nI'm a part the team behind [Memori](https://memori.gibsonai.com/).\n\nMemori adds a stateful memory engine to AI agents, enabling them to stay consistent, recall past work, and improve over ...",
+          "comments": 14
+        },
+        {
+          "title": "DiffMem: Using Git as a Differential Memory Backend for AI Agents - Open-Source PoC",
+          "url": "https://reddit.comhttps://reddit.com/r/LocalLLaMA/comments/1mvgw9k/diffmem_using_git_as_a_differential_memory/",
+          "score": 71,
+          "subreddit": "LocalLLaMA",
+          "summary": "We've been experimenting with memory systems for AI agents, and I wanted to share a prototype I've built: DiffMem. It's a lightweight, Git-based memory backend that stores \"current state\" knowledge in...",
+          "comments": 24
+        },
+        {
+          "title": "Local Inference for Very Large Models - a Look at Current Options",
+          "url": "https://reddit.comhttps://reddit.com/r/LocalLLaMA/comments/1n1h6xx/local_inference_for_very_large_models_a_look_at/",
+          "score": 69,
+          "subreddit": "LocalLLaMA",
+          "summary": "Hello all. I've been considering upgrading my hardware to run larger models locally, and thought I might get some thoughts from the community. *Fair warning - this is a bit of a hardware rant*. \n\nCurr...",
+          "comments": 71
+        },
+        {
+          "title": "WarLlama: 2x MI50 LLM MicroATX Server",
+          "url": "https://reddit.comhttps://reddit.com/r/LocalLLaMA/comments/1nfqr69/warllama_2x_mi50_llm_microatx_server/",
+          "score": 62,
+          "subreddit": "LocalLLaMA",
+          "summary": "Some ppl on this sub have Ahab-class dreadnoughts rocking a DeepSeek/Kimi high quant. Other have a warhorse w a giant gpu or six (or 16x?). This is my sleek lil *warllama*. \n\nIt's is not abt the bling...",
+          "comments": 29
+        },
+        {
+          "title": "Engineer's Guide to Local LLMs with LLaMA.cpp and QwenCode on Linux",
+          "url": "https://reddit.comhttps://reddit.com/r/LocalLLaMA/comments/1nhh1v1/engineers_guide_to_local_llms_with_llamacpp_and/",
+          "score": 60,
+          "subreddit": "LocalLLaMA",
+          "summary": "# Introduction\n\nIn this write up I will share my local AI setup on Ubuntu that I use for my personal projects as well as professional workflows (local chat, agentic workflows, coding agents, data anal...",
+          "comments": 15
+        }
+      ]
+    },
+    "pain_points": {
+      "title": "\ud83d\ude24 Pain Points & Problems",
+      "description": "Posts highlighting specific user frustrations and unmet needs",
+      "count": 5,
+      "links": [
+        {
+          "title": "[R] \u0394APT: critical review aimed at maximizing clinical outcomes in AI/LLM Psychotherapy",
+          "url": "https://reddit.comhttps://reddit.com/r/MachineLearning/comments/1n0vcrb/r_\u03b4apt_critical_review_aimed_at_maximizing/",
+          "score": 118,
+          "subreddit": "",
+          "summary": "Contains 1 pain points, 0 opportunities, 0 evidence items",
+          "identified_pain_points": [
+            "want"
+          ]
+        },
+        {
+          "title": "Finetuning Qwen3 on my Mac: A Descent into Madness (and some fun along the way)",
+          "url": "https://reddit.comhttps://reddit.com/r/LocalLLaMA/comments/1n3c3ve/finetuning_qwen3_on_my_mac_a_descent_into_madness/",
+          "score": 112,
+          "subreddit": "",
+          "summary": "Contains 1 pain points, 1 opportunities, 8 evidence items",
+          "identified_pain_points": [
+            "want"
+          ]
+        },
+        {
+          "title": "DiffMem: Using Git as a Differential Memory Backend for AI Agents - Open-Source PoC",
+          "url": "https://reddit.comhttps://reddit.com/r/LocalLLaMA/comments/1mvgw9k/diffmem_using_git_as_a_differential_memory/",
+          "score": 71,
+          "subreddit": "",
+          "summary": "Contains 1 pain points, 0 opportunities, 0 evidence items",
+          "identified_pain_points": [
+            "want"
+          ]
+        },
+        {
+          "title": "Local Inference for Very Large Models - a Look at Current Options",
+          "url": "https://reddit.comhttps://reddit.com/r/LocalLLaMA/comments/1n1h6xx/local_inference_for_very_large_models_a_look_at/",
+          "score": 69,
+          "subreddit": "",
+          "summary": "Contains 1 pain points, 1 opportunities, 4 evidence items",
+          "identified_pain_points": [
+            "hard"
+          ]
+        },
+        {
+          "title": "Engineer's Guide to Local LLMs with LLaMA.cpp and QwenCode on Linux",
+          "url": "https://reddit.comhttps://reddit.com/r/LocalLLaMA/comments/1nhh1v1/engineers_guide_to_local_llms_with_llamacpp_and/",
+          "score": 60,
+          "subreddit": "",
+          "summary": "Contains 1 pain points, 0 opportunities, 3 evidence items",
+          "identified_pain_points": [
+            "want"
+          ]
+        }
+      ]
+    },
+    "opportunities": {
+      "title": "\ud83d\udca1 Business Opportunities",
+      "description": "Discussions suggesting potential solutions and market gaps",
+      "count": 3,
+      "links": [
+        {
+          "title": "Finetuning Qwen3 on my Mac: A Descent into Madness (and some fun along the way)",
+          "url": "https://reddit.comhttps://reddit.com/r/LocalLLaMA/comments/1n3c3ve/finetuning_qwen3_on_my_mac_a_descent_into_madness/",
+          "score": 112,
+          "subreddit": "",
+          "summary": "Contains 1 pain points, 1 opportunities, 8 evidence items",
+          "identified_opportunities": [
+            "tool"
+          ]
+        },
+        {
+          "title": "We open-sourced Memori: A memory engine for AI agents",
+          "url": "https://reddit.comhttps://reddit.com/r/LocalLLaMA/comments/1mto88l/we_opensourced_memori_a_memory_engine_for_ai/",
+          "score": 84,
+          "subreddit": "",
+          "summary": "Contains 0 pain points, 1 opportunities, 0 evidence items",
+          "identified_opportunities": [
+            "tool"
+          ]
+        },
+        {
+          "title": "Local Inference for Very Large Models - a Look at Current Options",
+          "url": "https://reddit.comhttps://reddit.com/r/LocalLLaMA/comments/1n1h6xx/local_inference_for_very_large_models_a_look_at/",
+          "score": 69,
+          "subreddit": "",
+          "summary": "Contains 1 pain points, 1 opportunities, 4 evidence items",
+          "identified_opportunities": [
+            "app"
+          ]
+        }
+      ]
+    },
+    "evidence": {
+      "title": "\ud83d\udcca Supporting Evidence",
+      "description": "Additional posts and comments that validate the opportunities",
+      "count": 6,
+      "links": [
+        {
+          "title": "Open-Sourcing Medical LLM which Scores 85.8% on USMLE-Style Questions, Beating Similar Models - \ud835\ude7d\ud835\ude74\ud835\ude74\ud835\ude83\ud835\ude7e\u2013\ud835\udff7.\ud835\udff6\u2013\ud835\udffe\ud835\ude71 \ud83d\ude80",
+          "url": "https://reddit.comhttps://reddit.com/r/LocalLLaMA/comments/1n4wf0j/opensourcing_medical_llm_which_scores_858_on/",
+          "score": 237,
+          "subreddit": "",
+          "summary": "Contains 0 pain points, 0 opportunities, 1 evidence items",
+          "evidence_items": 1
+        },
+        {
+          "title": "vLLM is kinda awesome",
+          "url": "https://reddit.comhttps://reddit.com/r/LocalLLaMA/comments/1nh86i7/vllm_is_kinda_awesome/",
+          "score": 134,
+          "subreddit": "",
+          "summary": "Contains 0 pain points, 0 opportunities, 3 evidence items",
+          "evidence_items": 3
+        },
+        {
+          "title": "Finetuning Qwen3 on my Mac: A Descent into Madness (and some fun along the way)",
+          "url": "https://reddit.comhttps://reddit.com/r/LocalLLaMA/comments/1n3c3ve/finetuning_qwen3_on_my_mac_a_descent_into_madness/",
+          "score": 112,
+          "subreddit": "",
+          "summary": "Contains 1 pain points, 1 opportunities, 8 evidence items",
+          "evidence_items": 8
+        },
+        {
+          "title": "Local Inference for Very Large Models - a Look at Current Options",
+          "url": "https://reddit.comhttps://reddit.com/r/LocalLLaMA/comments/1n1h6xx/local_inference_for_very_large_models_a_look_at/",
+          "score": 69,
+          "subreddit": "",
+          "summary": "Contains 1 pain points, 1 opportunities, 4 evidence items",
+          "evidence_items": 4
+        },
+        {
+          "title": "WarLlama: 2x MI50 LLM MicroATX Server",
+          "url": "https://reddit.comhttps://reddit.com/r/LocalLLaMA/comments/1nfqr69/warllama_2x_mi50_llm_microatx_server/",
+          "score": 62,
+          "subreddit": "",
+          "summary": "Contains 0 pain points, 0 opportunities, 1 evidence items",
+          "evidence_items": 1
+        },
+        {
+          "title": "Engineer's Guide to Local LLMs with LLaMA.cpp and QwenCode on Linux",
+          "url": "https://reddit.comhttps://reddit.com/r/LocalLLaMA/comments/1nhh1v1/engineers_guide_to_local_llms_with_llamacpp_and/",
+          "score": 60,
+          "subreddit": "",
+          "summary": "Contains 1 pain points, 0 opportunities, 3 evidence items",
+          "evidence_items": 3
+        }
+      ]
+    }
+  },
+  "summary": {
+    "search_query": "multi llm usage chatbot AI interactions",
+    "focus_area": "ai",
+    "subreddits": "MachineLearning+artificial+ArtificialIntelligence+LocalLLaMA",
+    "total_posts_analyzed": 10
+  }
+}
