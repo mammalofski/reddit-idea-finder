@@ -23,7 +23,7 @@ try:
             agent = RedditProjectIdeaFinderAgent()
             
             # Test query
-            query = "Find SaaS ideas for content creators"
+            query = "find small profitable projects to sell entertainment for the rich. look for complains or suggestions."
             print(f"\n🎯 Demo Query: {query}")
             
             # Run the agent
@@ -31,6 +31,7 @@ try:
             # result = await agent.run_interactive_session()
             
             print("\n✅ Demo completed successfully!")
+            print(result)
             
         except Exception as e:
             print(f"⚠️ Demo running in limited mode due to: {e}")

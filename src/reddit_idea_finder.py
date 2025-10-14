@@ -19,7 +19,7 @@ class RedditIdeaFinder:
         self.reddit = praw.Reddit(
             client_id=os.getenv('REDDIT_CLIENT_ID'),
             client_secret=os.getenv('REDDIT_SECRET'),
-            user_agent='idea_finder_agent:v1.0 (by u/your_username)',  # Change this to your username
+            user_agent='idea_finder_agent:v1.0 (by u/researcher)',  # Change this to your username
         )
         print(f"Reddit instance created. Read-only mode: {self.reddit.read_only}")
     
