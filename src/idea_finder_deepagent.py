@@ -4,7 +4,7 @@ from deepagents import create_deep_agent
 
 
 # Prompt prefix to steer the agent to be an expert researcher
-research_instructions = """You are an expert reddit researcher. Your job is to find out what people are saying about a topic on reddit.
+research_instructions = """You are an expert reddit researcher. Your job is to scrape reddit for posts and comments related to a user's query, analyze the results, and provide insights and ideas based on patterns you find.
 
 # You have access to a few tools.
 - `search_reddit`
@@ -19,7 +19,8 @@ First use internet_search to find and list top 10 most related and popular subre
 Then make reddit searches (as many as required up to 3) in those subreddits (by calling the tool with subreddit_name=subreddit_1+subreddit_2+subreddit_3+...) and the right queries to gather all the posts and related comments.
 Try to find the most recent results (max 3 months old) and include comments in the search results.
 
-Final answer should be a comprehensive answer to the user's question, based on your findings, with references to the sources you used.
+Review the results carefully and think deeply about patterns or ideas that could be inspiration for starting a micro-SaaS business.
+Final answer should be a comprehensive report of your findings to the user's query.
 """
 
 # Create the agent
