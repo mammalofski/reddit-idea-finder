@@ -1,36 +1,65 @@
+from threading import current_thread
+import uuid
+
+from litellm import aget_assistants
+
 from tools import internet_search, search_reddit
-
+from prompts import research_instructions
 from deepagents import create_deep_agent
+from langgraph.checkpoint.memory import InMemorySaver
+
+class ModelOptions:
+   GPT_4_1 = "azure_openai:gpt-4.1"
+   GPT_4O = "azure_openai:gpt-4o"
+   GPT_5_CHAT = "azure_openai:gpt-5-chat"
+   GPT_5_MINI = "azure_openai:gpt-5-mini"
+   O4_MINI = "azure_openai:o4-mini"
+   O4_MINI = "azure_openai:grok-4-fast-reasoning"
+   GEMINI_2_5_FLASH = "google_genai:gemini-2.5-flash"
+   GEMINI_2_5_PRO = "google_genai:gemini-2.5-pro"
+
+def generate_thread_id():
+    return str(uuid.uuid4())
+
+def create_agent(system_prompt: str, tools: list, model: str = ModelOptions.GPT_4_1, add_memory: bool = True):
+   # Create the agent
+   agent = create_deep_agent(
+      tools,
+      system_prompt,
+      model=model,
+   )
+   if add_memory:
+      checkpointer = InMemorySaver()
+      agent.checkpointer = checkpointer
+   return agent
 
 
-# Prompt prefix to steer the agent to be an expert researcher
-research_instructions = """You are an expert reddit researcher. Your job is to scrape reddit for posts and comments related to a user's query, analyze the results, and provide insights and ideas based on patterns you find.
+def create_reddit_idea_finder_agent(model: str = ModelOptions.GPT_4_1):
+   # Create the agent
+   agent = create_agent(
+      research_instructions,
+      [internet_search, search_reddit],
+      model=model,
+      add_memory=True
+   )
+   return agent
 
-# You have access to a few tools.
-- `search_reddit`
-Search reddit for posts and comments related to a query, with options to filter by subreddit, sort order, time, and include comments.
 
-- `internet_search`
-Run a web search using Tavily search engine with configurable max results, topic category, and content options.
-It is useful to find relevant subreddits to search in reddit.
+current_thread_id = generate_thread_id()
 
-# instructions:
-First use internet_search to find and list top 10 most related and popular subreddits to the user's query.
-Then make reddit searches (as many as required up to 3) in those subreddits (by calling the tool with subreddit_name=subreddit_1+subreddit_2+subreddit_3+...) and the right queries to gather all the posts and related comments.
-Try to find the most recent results (max 3 months old) and include comments in the search results.
+def query_agent(agent, query: str, thread_id: str = current_thread_id, reset_memory: bool = False):
+    if reset_memory or not thread_id:
+        thread_id = generate_thread_id()
 
-Review the results carefully and think deeply about patterns or ideas that could be inspiration for starting a micro-SaaS business.
-Final answer should be a comprehensive report of your findings to the user's query.
-"""
+    result = agent.invoke(
+        {"messages": [{"role": "user", "content": query}]},
+        {"configurable": {"thread_id": thread_id}}
+        )
+    return result
 
-# Create the agent
-agent = create_deep_agent(
-    [internet_search, search_reddit],
-    research_instructions,
-    model="azure_openai:gpt-4.1",
-)
 
 if __name__ == "__main__":
     # Invoke the agent
-    result = agent.invoke({"messages": [{"role": "user", "content": "what are people talking about in SaaS community?"}]})
+    agent = create_reddit_idea_finder_agent()
+    result = query_agent(agent, "what are people talking about in SaaS community?")
     print(result)
