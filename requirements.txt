@@ -7,3 +7,5 @@ python-dotenv>=1.0.0
 asyncpraw>=7.0.0  # For better async support
 beautifulsoup4>=4.13.0  # For web scraping if needed
 jupyter>=1.0.0  # For running development notebooks
+
+deepagents==0.2.5

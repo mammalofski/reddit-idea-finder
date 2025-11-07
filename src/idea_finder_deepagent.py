@@ -4,7 +4,7 @@ import uuid
 from litellm import aget_assistants
 
 from tools import internet_search, search_reddit
-from prompts import research_instructions
+from prompts import business_research_instructions, generic_reddit_research_prompt
 from deepagents import create_deep_agent
 from langgraph.checkpoint.memory import InMemorySaver
 
@@ -21,12 +21,13 @@ class ModelOptions:
 def generate_thread_id():
     return str(uuid.uuid4())
 
-def create_agent(system_prompt: str, tools: list, model: str = ModelOptions.GPT_4_1, add_memory: bool = True):
+def create_agent(system_prompt: str, tools: list, model: str = ModelOptions.GPT_4_1, add_memory: bool = True, debug: bool = False):
    # Create the agent
    agent = create_deep_agent(
-      tools,
-      system_prompt,
+      tools=tools,
+      system_prompt=system_prompt,
       model=model,
+      debug=debug
    )
    if add_memory:
       checkpointer = InMemorySaver()
@@ -34,13 +35,14 @@ def create_agent(system_prompt: str, tools: list, model: str = ModelOptions.GPT_
    return agent
 
 
-def create_reddit_idea_finder_agent(model: str = ModelOptions.GPT_4_1):
+def create_reddit_idea_finder_agent(instructions: str = business_research_instructions, model: str = ModelOptions.GPT_4_1, debug: bool = False):
    # Create the agent
    agent = create_agent(
-      research_instructions,
+      instructions,
       [internet_search, search_reddit],
       model=model,
-      add_memory=True
+      add_memory=True,
+      debug=debug,
    )
    return agent
 
